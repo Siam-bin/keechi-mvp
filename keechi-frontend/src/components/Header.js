@@ -2,6 +2,7 @@
 "use client";
 
 import { useAuth } from "@/hooks/useAuth";
+import { useAdmin } from "@/context/AdminContext";
 import UserHeader from "./UserHeader";
 import ShopOwnerHeader from "./ShopOwnerHeader";
 import GuestHeader from "./GuestHeader";
@@ -9,6 +10,7 @@ import { Loader } from "lucide-react";
 
 export default function Header() {
   const { user, isAuthenticated, loading } = useAuth();
+  const { isAuthenticated: isAdminAuthenticated } = useAdmin();
 
   // Show loading state
   if (loading) {
@@ -22,8 +24,13 @@ export default function Header() {
     );
   }
 
+  // If admin is authenticated, don't show user/shop header
+  if (isAdminAuthenticated) {
+    return <GuestHeader />;
+  }
+
   // Render appropriate header based on role
-  if (isAuthenticated) {
+  if (isAuthenticated && user) {
     if (user?.role === "user") {
       return <UserHeader />;
     } else if (user?.role === "shopOwner") {
