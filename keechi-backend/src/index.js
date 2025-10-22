@@ -25,6 +25,9 @@ app.use(
       const allowedOrigins = [
         "http://localhost:3000",
         "http://localhost:3001",
+        "https://keechi-mvp.vercel.app",
+        "https://keechi.app",
+        "https://www.keechi.app",
         process.env.FRONTEND_URL,
       ];
       if (!origin || allowedOrigins.includes(origin)) {
