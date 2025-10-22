@@ -1,0 +1,149 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User table - supports both customers and shop owners
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("user") // "user" or "shopOwner"
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relationships
+  appointments Appointment[]  // User's bookings
+  reviews      Review[]       // User's reviews
+  shop         Shop?          // If shopOwner, their shop
+  
+  @@map("users")
+}
+
+// Shop table - owned by shopOwner users
+model Shop {
+  id              Int      @id @default(autoincrement())
+  ownerId         Int      @unique
+  owner           User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  name            String
+  address         String
+  description     String?
+  phone           String?
+  imageUrl        String?  // Main shop image
+  coverImage      String?  // Banner image for shop page
+  galleryImages   String[] @default([]) // JSON array of image URLs
+  openHours       String?  // JSON format: {"Monday": "9-6", "Tuesday": "9-6", ...}
+  policies        String?  // JSON format: {"cancellation": "24 hours", ...}
+  area            String?  // Area/neighborhood (e.g., Gulshan, Dhanmondi)
+  rating          Float    @default(0)
+  reviewCount     Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  // Relationships
+  services        Service[]
+  appointments    Appointment[]
+  reviews         Review[]
+  
+  @@map("shops")
+}
+
+// Service table - services offered by shops
+model Service {
+  id          Int      @id @default(autoincrement())
+  shopId      Int
+  shop        Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  price       Float
+  duration    Int      // in minutes
+  category    String?  // e.g., "Haircut", "Coloring", "Spa"
+  imageUrl    String?  // Service image
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relationships
+  appointments Appointment[]
+  
+  @@map("services")
+}
+
+// Appointment table - bookings made by users at shops
+model Appointment {
+  id            Int      @id @default(autoincrement())
+  userId        Int?     // Optional: null for guest bookings
+  user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  shopId        Int
+  shop          Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  serviceId     Int
+  service       Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  dateTime      DateTime
+  status        String   @default("Pending") // Pending, Confirmed, Completed, Cancelled
+  notes         String?
+  customerName  String?  // For guest bookings or display purposes
+  customerPhone String?  // For guest bookings or display purposes
+  staffId       Int?     // Optional: assigned staff member
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@map("appointments")
+}
+
+// Review table - customer reviews for shops
+model Review {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  shopId    Int
+  shop      Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  rating    Int      // 1-5 stars
+  title     String?
+  text      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@unique([userId, shopId]) // One review per user per shop
+  @@map("reviews")
+}
+
+// Legacy Salon table - keeping for backwards compatibility
+model Salon {
+  id        Int      @id @default(autoincrement())
+  name      String
+  area      String
+  phone     String
+  services  String   // JSON string or comma-separated
+  address   String?
+  imageUrl  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  bookings  Booking[]
+
+  @@map("salons")
+}
+
+// Legacy Booking table - keeping for backwards compatibility
+model Booking {
+  id        Int      @id @default(autoincrement())
+  name      String
+  phone     String
+  service   String
+  dateTime  String   // Format: YYYY-MM-DD HH:mm
+  note      String?
+  status    String   @default("Pending") // Pending, Confirmed, Completed, Cancelled
+  salonId   Int
+  salon     Salon    @relation(fields: [salonId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("bookings")
+}

@@ -1,0 +1,14 @@
+# Render Configuration for Backend
+# Place this file in root directory or backend folder
+
+# Build Command
+build: npm install && npx prisma migrate deploy && npm run seed
+
+# Start Command  
+start: npm start
+
+# Environment
+NODE_ENV: production
+PORT: 5000
+
+# Database will be connected via DATABASE_URL environment variable on Render dashboard

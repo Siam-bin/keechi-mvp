@@ -1,0 +1,220 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* === BASE STYLES === */
+@layer base {
+  body {
+    @apply bg-white text-charcoal-800;
+    font-family: "Inter", system-ui, sans-serif;
+    line-height: 1.6;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl font-bold text-charcoal-900 font-display;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl font-bold text-charcoal-900 font-display;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl font-bold text-charcoal-800 font-display;
+  }
+
+  h4 {
+    @apply text-xl font-bold text-charcoal-800;
+  }
+
+  p {
+    @apply text-charcoal-700 leading-relaxed;
+  }
+
+  small {
+    @apply text-charcoal-600 text-sm;
+  }
+}
+
+/* === COMPONENT STYLES === */
+@layer components {
+  /* Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+
+  .btn-primary {
+    @apply btn px-6 py-3 bg-gold-400 text-charcoal-900 hover:bg-gold-500 focus:ring-gold-400 shadow-sm hover:shadow-md;
+  }
+
+  .btn-primary-dark {
+    @apply btn px-6 py-3 bg-charcoal-800 text-white hover:bg-charcoal-900 focus:ring-charcoal-800 shadow-sm hover:shadow-md;
+  }
+
+  .btn-secondary {
+    @apply btn px-6 py-3 bg-gold-50 text-gold-700 hover:bg-gold-100 focus:ring-gold-400 border border-gold-200;
+  }
+
+  .btn-ghost {
+    @apply btn px-4 py-2 text-charcoal-700 hover:bg-charcoal-50 focus:ring-charcoal-400;
+  }
+
+  .btn-small {
+    @apply btn px-4 py-2 text-sm;
+  }
+
+  .btn-large {
+    @apply btn px-8 py-4 text-lg;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-white rounded-2xl border border-charcoal-100 overflow-hidden transition-all duration-300;
+  }
+
+  .card-hover {
+    @apply hover:shadow-lg hover:border-gold-300;
+  }
+
+  .card-elevated {
+    @apply shadow-md;
+  }
+
+  /* Inputs */
+  .input-field {
+    @apply w-full px-4 py-3 rounded-lg border border-charcoal-200 text-charcoal-900 placeholder-charcoal-500;
+    @apply focus:outline-none focus:ring-2 focus:ring-gold-400 focus:border-transparent;
+    @apply transition-all duration-200;
+  }
+
+  .input-field:disabled {
+    @apply bg-charcoal-50 text-charcoal-500 cursor-not-allowed;
+  }
+
+  /* Badges */
+  .badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold;
+  }
+
+  .badge-gold {
+    @apply badge bg-gold-100 text-gold-700;
+  }
+
+  .badge-success {
+    @apply badge bg-green-100 text-green-700;
+  }
+
+  .badge-warning {
+    @apply badge bg-yellow-100 text-yellow-700;
+  }
+
+  /* Sections */
+  .section {
+    @apply py-12 md:py-16 px-4;
+  }
+
+  .section-container {
+    @apply max-w-6xl mx-auto;
+  }
+
+  /* Grid */
+  .grid-responsive {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+
+  /* Divider */
+  .divider {
+    @apply border-b border-charcoal-100;
+  }
+
+  /* Loading skeleton */
+  .skeleton {
+    @apply bg-charcoal-100 rounded-lg animate-pulse;
+  }
+}
+
+/* === UTILITIES === */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .truncate-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .gradient-gold {
+    @apply bg-gradient-to-r from-gold-400 to-gold-500;
+  }
+
+  .gradient-charcoal {
+    @apply bg-gradient-to-r from-charcoal-800 to-charcoal-900;
+  }
+
+  .shadow-gold {
+    @apply shadow-lg shadow-gold-400/20;
+  }
+
+  /* Touch Target - Minimum 44px for accessibility */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Responsive text truncation */
+  .line-clamp-1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Improved scrolling */
+  .scroll-smooth {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Custom scrollbar styling */
+*::-webkit-scrollbar {
+  width: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background-color: #f5f5f5;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #f8c471;
+  border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #f7b84d;
+}
