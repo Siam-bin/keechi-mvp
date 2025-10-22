@@ -1,8 +1,5 @@
 {
   "buildCommand": "cd keechi-frontend && npm install && npm run build",
   "outputDirectory": "keechi-frontend/.next",
-  "installCommand": "npm install --prefix keechi-frontend",
-  "functions": {
-    "api": "keechi-backend"
-  }
+  "installCommand": "npm install --prefix keechi-frontend"
 }
