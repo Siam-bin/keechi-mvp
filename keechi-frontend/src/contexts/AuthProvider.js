@@ -67,7 +67,7 @@ export function AuthProvider({ children }) {
 
       return { success: true, user: newUser };
     } catch (err) {
-      const errorMsg = err.response?.data?.error || err.message;
+      const errorMsg = err.data?.error || err.message || "Signup failed";
       setError(errorMsg);
       return { success: false, error: errorMsg };
     } finally {
@@ -91,7 +91,7 @@ export function AuthProvider({ children }) {
 
       return { success: true, user: newUser };
     } catch (err) {
-      const errorMsg = err.response?.data?.error || err.message;
+      const errorMsg = err.data?.error || err.message || "Login failed";
       setError(errorMsg);
       return { success: false, error: errorMsg };
     } finally {
@@ -133,7 +133,7 @@ export function AuthProvider({ children }) {
 
       return { success: true, user: newUser };
     } catch (err) {
-      const errorMsg = err.response?.data?.error || err.message;
+      const errorMsg = err.data?.error || err.message || "Shop signup failed";
       setError(errorMsg);
       return { success: false, error: errorMsg };
     } finally {
@@ -157,7 +157,7 @@ export function AuthProvider({ children }) {
 
       return { success: true, user: newUser };
     } catch (err) {
-      const errorMsg = err.response?.data?.error || err.message;
+      const errorMsg = err.data?.error || err.message || "Shop login failed";
       setError(errorMsg);
       return { success: false, error: errorMsg };
     } finally {

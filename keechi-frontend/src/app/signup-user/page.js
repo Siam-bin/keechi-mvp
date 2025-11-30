@@ -82,8 +82,10 @@ export default function SignupUserPage() {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
+                autoComplete="name"
                 className="w-full pl-10 pr-4 py-2.5 border border-charcoal-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold-400 focus:border-transparent"
                 placeholder="John Doe"
+                required
               />
             </div>
           </div>
@@ -100,8 +102,10 @@ export default function SignupUserPage() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
+                autoComplete="email"
                 className="w-full pl-10 pr-4 py-2.5 border border-charcoal-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold-400 focus:border-transparent"
                 placeholder="you@example.com"
+                required
               />
             </div>
           </div>
@@ -118,6 +122,7 @@ export default function SignupUserPage() {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
+                autoComplete="tel"
                 className="w-full pl-10 pr-4 py-2.5 border border-charcoal-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold-400 focus:border-transparent"
                 placeholder="+880 1234567890"
               />
@@ -136,8 +141,10 @@ export default function SignupUserPage() {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
+                autoComplete="new-password"
                 className="w-full pl-10 pr-4 py-2.5 border border-charcoal-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold-400 focus:border-transparent"
                 placeholder="••••••••"
+                required
               />
             </div>
             <p className="text-xs text-charcoal-500 mt-1">Minimum 6 characters</p>

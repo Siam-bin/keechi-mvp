@@ -1,26 +1,38 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, ChevronLeft, ChevronRight, Clock, Calendar } from "lucide-react";
-import { api } from "@/lib/api";
+import { X, ChevronLeft, ChevronRight, Clock, Calendar, User } from "lucide-react";
+import { api, teamMemberService } from "@/lib/api";
 import toast from "react-hot-toast";
 
 export function SlotPickerModal({ cartItems, shopId, onClose, onConfirm }) {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
+  const [selectedTeamMember, setSelectedTeamMember] = useState(null);
+  const [teamMembers, setTeamMembers] = useState([]);
   const [slots, setSlots] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [currentWeekStart, setCurrentWeekStart] = useState(new Date());
 
-  // Initialize with today's date
+  // Initialize with today's date and fetch team members
   useEffect(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     setSelectedDate(today);
     setCurrentWeekStart(today);
     fetchSlots(today);
+    fetchTeamMembers();
   }, []);
+
+  const fetchTeamMembers = async () => {
+    try {
+      const members = await teamMemberService.getShopTeamMembers(shopId);
+      setTeamMembers(members);
+    } catch (err) {
+      console.error("Failed to fetch team members", err);
+    }
+  };
 
   // Fetch available slots for selected date
   const fetchSlots = async (date) => {
@@ -29,7 +41,7 @@ export function SlotPickerModal({ cartItems, shopId, onClose, onConfirm }) {
       setError(null);
       const dateStr = date.toISOString().split("T")[0];
       const firstItem = cartItems[0];
-      
+
       const response = await api.get(
         `/availability?shopId=${shopId}&serviceId=${firstItem.serviceId}&date=${dateStr}`
       );
@@ -120,6 +132,7 @@ export function SlotPickerModal({ cartItems, shopId, onClose, onConfirm }) {
       dateTime: dateTimeStr,
       date: selectedDate,
       time: selectedTime,
+      teamMemberId: selectedTeamMember?.id,
     });
   };
 
@@ -165,6 +178,42 @@ export function SlotPickerModal({ cartItems, shopId, onClose, onConfirm }) {
             ))}
           </div>
 
+          {/* Team Member Selection */}
+          {teamMembers.length > 0 && (
+            <div>
+              <h4 className="font-semibold text-charcoal-900 mb-4 flex items-center gap-2">
+                <User size={18} className="text-gold-500" />
+                Select Professional (Optional)
+              </h4>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <button
+                  onClick={() => setSelectedTeamMember(null)}
+                  className={`p-3 rounded-xl border text-left transition ${!selectedTeamMember
+                      ? "border-gold-500 bg-gold-50 ring-1 ring-gold-500"
+                      : "border-charcoal-200 hover:border-gold-300"
+                    }`}
+                >
+                  <div className="font-semibold text-charcoal-900">Any Professional</div>
+                  <div className="text-xs text-charcoal-500">Maximum availability</div>
+                </button>
+
+                {teamMembers.map((member) => (
+                  <button
+                    key={member.id}
+                    onClick={() => setSelectedTeamMember(member)}
+                    className={`p-3 rounded-xl border text-left transition ${selectedTeamMember?.id === member.id
+                        ? "border-gold-500 bg-gold-50 ring-1 ring-gold-500"
+                        : "border-charcoal-200 hover:border-gold-300"
+                      }`}
+                  >
+                    <div className="font-semibold text-charcoal-900 truncate">{member.name}</div>
+                    <div className="text-xs text-charcoal-500 truncate">{member.role}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Date Picker */}
           <div>
             <h4 className="font-semibold text-charcoal-900 mb-4 flex items-center gap-2">
@@ -202,13 +251,12 @@ export function SlotPickerModal({ cartItems, shopId, onClose, onConfirm }) {
                 <button
                   key={day.toISOString()}
                   onClick={() => handleDateSelect(day)}
-                  className={`py-2 px-3 rounded-lg font-medium text-sm transition ${
-                    isDateSelected(day)
+                  className={`py-2 px-3 rounded-lg font-medium text-sm transition ${isDateSelected(day)
                       ? "bg-gold-500 text-white"
                       : isToday(day)
-                      ? "bg-charcoal-100 text-charcoal-900 border-2 border-gold-400"
-                      : "bg-charcoal-50 text-charcoal-700 hover:bg-charcoal-100"
-                  }`}
+                        ? "bg-charcoal-100 text-charcoal-900 border-2 border-gold-400"
+                        : "bg-charcoal-50 text-charcoal-700 hover:bg-charcoal-100"
+                    }`}
                 >
                   <div className="text-xs">
                     {day.toLocaleDateString("en-US", { weekday: "short" })}
@@ -242,13 +290,12 @@ export function SlotPickerModal({ cartItems, shopId, onClose, onConfirm }) {
                       key={idx}
                       onClick={() => slot.available && setSelectedTime(slot.timeString)}
                       disabled={!slot.available}
-                      className={`py-2 px-2 rounded-lg font-medium text-sm transition ${
-                        selectedTime === slot.timeString
+                      className={`py-2 px-2 rounded-lg font-medium text-sm transition ${selectedTime === slot.timeString
                           ? "bg-gold-500 text-white"
                           : slot.available
-                          ? "bg-green-100 text-green-800 hover:bg-green-200"
-                          : "bg-charcoal-100 text-charcoal-400 cursor-not-allowed"
-                      }`}
+                            ? "bg-green-100 text-green-800 hover:bg-green-200"
+                            : "bg-charcoal-100 text-charcoal-400 cursor-not-allowed"
+                        }`}
                     >
                       {slot.timeString}
                     </button>
@@ -265,6 +312,11 @@ export function SlotPickerModal({ cartItems, shopId, onClose, onConfirm }) {
                 <span className="font-semibold">Booking Summary:</span> {itemCount} service(s) on{" "}
                 {formatDateDisplay(selectedDate)} at {selectedTime} ({totalDuration} min) •{" "}
                 <span className="font-bold text-gold-600">৳{totalPrice.toFixed(0)}</span>
+                {selectedTeamMember && (
+                  <span className="block mt-1 text-charcoal-600">
+                    Professional: <span className="font-semibold">{selectedTeamMember.name}</span>
+                  </span>
+                )}
               </p>
             </div>
           )}
@@ -287,11 +339,10 @@ export function SlotPickerModal({ cartItems, shopId, onClose, onConfirm }) {
             <button
               onClick={handleConfirm}
               disabled={!selectedDate || !selectedTime}
-              className={`flex-1 px-4 py-3 rounded-lg font-semibold text-white transition ${
-                selectedDate && selectedTime
+              className={`flex-1 px-4 py-3 rounded-lg font-semibold text-white transition ${selectedDate && selectedTime
                   ? "bg-gold-500 hover:bg-gold-600"
                   : "bg-charcoal-300 cursor-not-allowed"
-              }`}
+                }`}
             >
               Confirm Booking
             </button>

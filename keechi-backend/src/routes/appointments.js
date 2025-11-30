@@ -16,7 +16,7 @@ router.get("/", authMiddleware, async (req, res) => {
       // Get user's appointments
       appointments = await prisma.appointment.findMany({
         where: { userId: req.user.id },
-        include: { shop: true, service: true, user: true },
+        include: { shop: true, service: true, user: true, teamMember: true },
       });
     } else if (req.user.role === "shopOwner") {
       // Get shop's appointments
@@ -30,7 +30,7 @@ router.get("/", authMiddleware, async (req, res) => {
 
       appointments = await prisma.appointment.findMany({
         where: { shopId: shop.id },
-        include: { shop: true, service: true, user: true },
+        include: { shop: true, service: true, user: true, teamMember: true },
       });
     }
 
@@ -45,7 +45,7 @@ router.get("/:id", async (req, res) => {
   try {
     const appointment = await prisma.appointment.findUnique({
       where: { id: parseInt(req.params.id) },
-      include: { shop: true, service: true, user: true },
+      include: { shop: true, service: true, user: true, teamMember: true },
     });
 
     if (!appointment) {
@@ -74,7 +74,7 @@ router.post("/", async (req, res) => {
     // Try to get user from auth header if provided
     let userId = null;
     const token = req.headers.authorization?.split(" ")[1];
-    
+
     if (token) {
       try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET || "your-secret-key");
@@ -84,7 +84,7 @@ router.post("/", async (req, res) => {
       }
     }
 
-    const { shopId, serviceId, dateTime, notes, userName, userPhone } = req.body;
+    const { shopId, serviceId, dateTime, notes, userName, userPhone, teamMemberId } = req.body;
 
     if (!shopId || !serviceId || !dateTime) {
       return res.status(400).json({ error: "Missing required fields: shopId, serviceId, dateTime" });
@@ -124,8 +124,9 @@ router.post("/", async (req, res) => {
         status: "Pending",
         customerName: userName || null,
         customerPhone: userPhone || null,
+        teamMemberId: teamMemberId ? parseInt(teamMemberId) : null,
       },
-      include: { shop: true, service: true, user: true },
+      include: { shop: true, service: true, user: true, teamMember: true },
     });
 
     res.status(201).json(appointment);

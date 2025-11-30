@@ -11,6 +11,8 @@ import servicesRoutes from "./routes/services.js";
 import appointmentsRoutes from "./routes/appointments.js";
 import availabilityRoutes from "./routes/availability.js";
 import reviewsRoutes from "./routes/reviews.js";
+import analyticsRoutes from "./routes/analytics.js";
+import teamMemberRoutes from "./routes/teamMemberRoutes.js";
 
 dotenv.config();
 
@@ -63,6 +65,8 @@ app.use("/api/services", servicesRoutes);
 app.use("/api/appointments", appointmentsRoutes);
 app.use("/api/availability", availabilityRoutes);
 app.use("/api/reviews", reviewsRoutes);
+app.use("/api/analytics", analyticsRoutes);
+app.use("/api/team-members", teamMemberRoutes);
 
 // 404 handler
 app.use((req, res) => {

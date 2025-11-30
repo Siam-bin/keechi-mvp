@@ -134,11 +134,10 @@ export default function ShopPage() {
       {/* Cart Button (Floating) */}
       <button
         onClick={() => setShowCartSidebar(true)}
-        className={`fixed bottom-8 right-8 z-40 rounded-full shadow-2xl transition-all flex items-center justify-center gap-2 px-6 py-3 ${
-          itemCount > 0
+        className={`fixed bottom-8 right-8 z-40 rounded-full shadow-2xl transition-all flex items-center justify-center gap-2 px-6 py-3 ${itemCount > 0
             ? "bg-gradient-to-r from-gold-400 to-gold-500 text-white hover:shadow-xl"
             : "bg-charcoal-300 text-charcoal-600"
-        }`}
+          }`}
       >
         <ShoppingCart size={20} />
         <span className="font-bold">{itemCount}</span>
@@ -193,6 +192,7 @@ export default function ShopPage() {
                     serviceId: item.serviceId,
                     dateTime: bookingData.dateTime,
                     notes: "",
+                    teamMemberId: bookingData.teamMemberId,
                   });
                   appointments.push(response.data);
                 }

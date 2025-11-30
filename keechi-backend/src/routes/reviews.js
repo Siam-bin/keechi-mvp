@@ -17,7 +17,10 @@ router.get("/", async (req, res) => {
 
     const reviews = await prisma.review.findMany({
       where: { shopId: parseInt(shopId) },
-      include: { user: { select: { name: true, email: true } } },
+      include: {
+        user: { select: { name: true, email: true } },
+        teamMember: { select: { name: true, role: true } }
+      },
       orderBy: { createdAt: "desc" },
     });
 
@@ -41,7 +44,7 @@ router.get("/", async (req, res) => {
 // POST /api/reviews - Create a review (user must have completed appointment)
 router.post("/", authMiddleware, roleMiddleware(["user"]), async (req, res) => {
   try {
-    const { shopId, rating, title, text } = req.body;
+    const { shopId, rating, title, text, teamMemberId } = req.body;
 
     if (!shopId || !rating || !text) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -80,7 +83,12 @@ router.post("/", authMiddleware, roleMiddleware(["user"]), async (req, res) => {
       // Update existing review
       const updated = await prisma.review.update({
         where: { id: existingReview.id },
-        data: { rating, title, text },
+        data: {
+          rating,
+          title,
+          text,
+          teamMemberId: teamMemberId ? parseInt(teamMemberId) : existingReview.teamMemberId
+        },
         include: { user: { select: { name: true } } },
       });
       return res.json(updated);
@@ -94,6 +102,7 @@ router.post("/", authMiddleware, roleMiddleware(["user"]), async (req, res) => {
         rating,
         title,
         text,
+        teamMemberId: teamMemberId ? parseInt(teamMemberId) : null,
       },
       include: { user: { select: { name: true } } },
     });

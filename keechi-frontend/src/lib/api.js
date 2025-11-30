@@ -17,7 +17,7 @@ api.interceptors.request.use(
       const userToken = localStorage.getItem("authToken");
       const adminToken = localStorage.getItem("adminToken");
       const token = userToken || adminToken;
-      
+
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -137,5 +137,35 @@ export const adminService = {
     if (typeof window !== "undefined") {
       localStorage.setItem("adminToken", token);
     }
+  },
+};
+
+// ============================================
+// TEAM MEMBER ENDPOINTS
+// ============================================
+export const teamMemberService = {
+  // Get team members for a specific shop (public)
+  getShopTeamMembers: (shopId) => {
+    return api.get(`/team-members/shop/${shopId}`).then((res) => res.data);
+  },
+
+  // Get authenticated shop owner's team members
+  getMyTeamMembers: () => {
+    return api.get("/team-members/my-team").then((res) => res.data);
+  },
+
+  // Create new team member
+  createTeamMember: (data) => {
+    return api.post("/team-members", data).then((res) => res.data);
+  },
+
+  // Update team member
+  updateTeamMember: (id, data) => {
+    return api.patch(`/team-members/${id}`, data).then((res) => res.data);
+  },
+
+  // Delete team member
+  deleteTeamMember: (id) => {
+    return api.delete(`/team-members/${id}`).then((res) => res.data);
   },
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
@@ -9,11 +9,23 @@ import { ArrowLeft, Mail, Lock } from "lucide-react";
 
 export default function LoginShopPage() {
   const router = useRouter();
-  const { loginShop, loading } = useAuth();
+  const { loginShop, loading, user, isAuthenticated } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      if (user.role === "user") {
+        toast.error("You're logged in as a customer. Please logout first.");
+        router.push("/profile");
+      } else {
+        router.push("/dashboard");
+      }
+    }
+  }, [isAuthenticated, user, router]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -70,8 +82,10 @@ export default function LoginShopPage() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
+                autoComplete="email"
                 className="w-full pl-10 pr-4 py-2.5 border border-charcoal-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold-400 focus:border-transparent"
                 placeholder="shop@example.com"
+                required
               />
             </div>
           </div>
@@ -88,8 +102,10 @@ export default function LoginShopPage() {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
+                autoComplete="current-password"
                 className="w-full pl-10 pr-4 py-2.5 border border-charcoal-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold-400 focus:border-transparent"
                 placeholder="••••••••"
+                required
               />
             </div>
           </div>

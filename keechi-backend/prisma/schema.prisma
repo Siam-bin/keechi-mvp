@@ -53,6 +53,7 @@ model Shop {
   services        Service[]
   appointments    Appointment[]
   reviews         Review[]
+  teamMembers     TeamMember[]
   
   @@map("shops")
 }
@@ -91,7 +92,9 @@ model Appointment {
   notes         String?
   customerName  String?  // For guest bookings or display purposes
   customerPhone String?  // For guest bookings or display purposes
-  staffId       Int?     // Optional: assigned staff member
+  staffId       Int?     // Optional: assigned staff member (Legacy/Simple)
+  teamMemberId  Int?     // Link to TeamMember model
+  teamMember    TeamMember? @relation(fields: [teamMemberId], references: [id], onDelete: SetNull)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   
@@ -113,6 +116,31 @@ model Review {
   
   @@unique([userId, shopId]) // One review per user per shop
   @@map("reviews")
+  
+  // Relationships
+  teamMemberId Int?
+  teamMember   TeamMember? @relation(fields: [teamMemberId], references: [id], onDelete: SetNull)
+}
+
+// Team Member table - staff members of a shop
+model TeamMember {
+  id          Int      @id @default(autoincrement())
+  shopId      Int
+  shop        Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  name        String
+  role        String   // e.g., "Senior Stylist", "Colorist"
+  bio         String?
+  imageUrl    String?
+  specialties String[] @default([]) // Array of service categories or names
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  appointments Appointment[]
+  reviews      Review[]
+
+  @@map("team_members")
 }
 
 // Legacy Salon table - keeping for backwards compatibility

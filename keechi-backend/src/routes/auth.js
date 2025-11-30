@@ -68,8 +68,10 @@ router.post("/user/signup", async (req, res) => {
 router.post("/user/login", async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log(`[Login Attempt] Email: ${email}`);
 
     if (!email || !password) {
+      console.log("[Login Failed] Missing email or password");
       return res.status(400).json({ error: "Email and password required" });
     }
 
@@ -79,17 +81,20 @@ router.post("/user/login", async (req, res) => {
     });
 
     if (!user) {
+      console.log(`[Login Failed] User not found for email: ${email}`);
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
     // Verify password
     const isPasswordValid = await verifyPassword(password, user.password);
     if (!isPasswordValid) {
+      console.log(`[Login Failed] Invalid password for email: ${email}`);
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
     // Generate token
     const token = generateToken(user);
+    console.log(`[Login Success] User: ${email}`);
 
     res.json({
       message: "Login successful",
